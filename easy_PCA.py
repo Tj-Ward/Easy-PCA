@@ -13,6 +13,10 @@ descript_text = '''
 #  Hello and welcome to easy PCA!
 #    
 #  This application accepts a path of nifti images and will run PCA on them! Can be any modality but must be 3D. 
+#
+#  If you specify a template, all images will be resliced to fit it. This is good for reducing voxel size to use les memory.
+#  
+#  If you specify a mask, the image is masked after smoothing (if applicable).
 #  
 #  Pre-reqs: 
 #      1.) Register your images to a template. All must be in the same space! This is tested in MNI152.
@@ -44,7 +48,7 @@ parser.add_argument("-o", "--outpath",type=str, help="Where to save PC's",defaul
 parser.add_argument("--eigencutoff",type=float, help="Percent 0-1 cutoff for eigenvalues",default=0.005, required=False)
 parser.add_argument("--template",type=str, help="Template for reslicing images. should be same space is images. Can be one of your images. Optional.",default='', required=False)
 parser.add_argument("--mask",type=str, help="Mask PET images by this... mask. Optional.",default=False, required=False)
-parser.add_argument("--smooth",nargs=3,type=int, help="Smooth images by FWHM (pyspmsmooth) [X Y Z]. Default == [8 8 8]",default=[4,4,4] ,required=False)
+parser.add_argument("--smooth",nargs=3,type=int, help="Smooth images by FWHM (pyspmsmooth) [X Y Z]. Default is '4 4 4'",default=[5, 5, 5] ,required=False)
 
 args = parser.parse_args()
 if args.outpath == '':
@@ -96,33 +100,42 @@ def all_equal(iterator):
 def load_data(IMAGES,template):
     print('\nLoading and preprocessing images...')
     fourD = False
-    img_affines = nib.load(IMAGES[0]).affine
+    img_affines = nib.load(template).affine
+    if template == '':
+        reslice_imgs = False
+        template = nib.load(IMAGES[0])
+    else:
+        reslice_imgs = True
+        template = nib.load(template)
+    img_affines = template.affine
+
     if args.mask:
+        # Load and resample the mask image to fit the rest of the data
         mask_img = nib.load(args.mask)
         if ~((mask_img.affine == img_affines).all()):
             print('Reslicing the mask img')
             mask_img = resample_to_img(mask_img,template,interpolation='nearest')
         mask_img = mask_img.get_fdata() == 0
     for path in IMAGES:
+        # Load, resample to template, smooth, mask in that order.
         print('  '+path)
         img = nib.load(path)
-        img_array = img.get_fdata().copy()
-        if args.mask:img_array[mask] = 0 # or np.nan if you want to use edge_pres(erving)
-        img = nib.Nifti1Image(img_array,affine=img.affine.copy(),header=img.header.copy())
+        if reslice_imgs: 
+            img = resample_to_img(img,template)
         if (args.smooth != 0).any():
             img = smo.spm_smooth(img,s=args.smooth,edge_pres=False)
-        if args.template != '':
-            img = resample_to_img(img,template)
-        img_array = img.get_fdata()
-        img_array = np.nan_to_num(img_array)
+
+        img_array = img.get_fdata().copy()
         if args.mask: img_array[mask_img] = 0
+        img = nib.Nifti1Image(img_array,affine=img.affine.copy(),header=img.header.copy())
+
         if type(fourD) == bool:
             fourD = img_array.reshape(template.shape + (1,))
         else:
             fourD = np.concatenate((fourD, img_array.reshape(template.shape + (1,))), axis=3)
     summed_img = np.nansum(fourD,axis=-1)
     meanImg = summed_img/len(IMAGES)
-    return meanImg,fourD
+    return meanImg,fourD,template
 
 @profile
 def Easy_PCA():
@@ -130,12 +143,7 @@ def Easy_PCA():
     This method requires equal image dimensions so you need a template to reslice your data to. 
     '''
     IMAGES = get_data(args.datapath)
-    if args.template == '':
-        template = nib.load(IMAGES[0])
-    else:
-        template = nib.load(args.template)
-    
-    meanImg,fourD = load_data(IMAGES,template)
+    meanImg,fourD,template = load_data(IMAGES,args.template)
     meanImg_img = nib.Nifti1Image(meanImg.copy(),affine=template.affine.copy(),header=template.header.copy())
     meanImg_img.to_filename(os.path.join(args.outpath,'mean_img.nii.gz'))
 
@@ -199,12 +207,10 @@ def ask_to_overwrite(filepath):
 
 def get_data(datapath):
     print('Searching directory:',datapath)
-    if not os.path.exists(datapath):
-        print(datapath)
-        raise Exception('Path does not exist. Aborting.')
     images = []
-    for extension in SUPPORTED_EXTENSIONS:
-        images.extend(glob.glob(os.path.join(datapath,extension)))
+    #for extension in SUPPORTED_EXTENSIONS:
+    #    images.extend(glob.glob(os.path.join(datapath,extension)))
+    images = glob.glob(os.path.join(datapath))
     print(f'Found {len(images)} images.')
     return images
 
