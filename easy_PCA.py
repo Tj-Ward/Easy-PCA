@@ -120,6 +120,8 @@ def load_data(IMAGES,template):
         # Load, resample to template, smooth, mask in that order.
         print('  '+path)
         img = nib.load(path)
+        img = nib.Nifti1Image(np.nan_to_num(img.get_fdata()),affine=img.affine,header=img.header)
+
         if reslice_imgs: 
             img = resample_to_img(img,template)
         if (args.smooth != 0).any():
