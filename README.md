@@ -1,5 +1,5 @@
 
-# Easy voxelwise PCA designed for PET images
+# Easy voxelwise principal component analysis (PCA) implemented for positron emission tomography (PET) scans.
 
 Hello and welcome to easy PCA!  
   
