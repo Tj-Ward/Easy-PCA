@@ -1,6 +1,8 @@
-# ---Removed---
+# --- In Development ---
 
-Removed from git because it is not being maintained.
+I stoped development because I no longer wanted to use PCA.
+
+Code needs review. Not thoroughly tested. 
 
 # Easy voxelwise principal component analysis (PCA) implemented for positron emission tomography (PET) scans.
 
