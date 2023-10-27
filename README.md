@@ -28,8 +28,10 @@ Hello and welcome to easy PCA!
     2.) Spreadsheets including all eigenvectors and eigenvalues.
   
 Method citations: 
-   http://dx.doi.org/10.1007/978-3-540-85988-8_53 
-   https://doi.org/10.1212/WNL.0b013e31829e6f94    
+Fripp, J. et al. (2008). MR-Less High Dimensional Spatial Normalization of 11C PiB PET Images on a Population of Elderly, Mild Cognitive Impaired and Alzheimer Disease Patients. In: Metaxas, D., Axel, L., Fichtinger, G., Székely, G. (eds) Medical Image Computing and Computer-Assisted Intervention – MICCAI 2008. MICCAI 2008. Lecture Notes in Computer Science, vol 5241. Springer, Berlin, Heidelberg. https://doi.org/10.1007/978-3-540-85988-8_53
+
+Meghan C. Campbell, Joanne Markham, Hubert Flores, Johanna M. Hartlein, Alison M. Goate, Nigel J. Cairns, Tom O. Videen, Joel S. Perlmutter
+Neurology Aug 2013, 81 (6) 520-527; DOI: 10.1212/WNL.0b013e31829e6f94 
 
 Written by Tyler J. Ward    
  *Jagust Lab, U.C. Berkeley*
