@@ -1,3 +1,8 @@
+# ---Removed---
+
+Removed from git because it is not being maintained
+
+# -------------
 
 # Easy voxelwise principal component analysis (PCA) implemented for positron emission tomography (PET) scans.
 
@@ -6,9 +11,9 @@ Hello and welcome to easy PCA!
 **Pre-reqs:** 
 
     1.) Register images to a template. All must be in the same space.
-    2.) Normalize your data, consider z-maps. 
+    2.) Normalize your data.
     3.) Images must be readable by Nibabel (nifti's are good)  
-    4.) Calculate required ram for the number of images you will be loading    
+    4.) Calculate required ram utilization for the number of images you will be loading    
   
 **Input:**
 
