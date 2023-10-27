@@ -1,6 +1,6 @@
 # --- In Development ---
 
-I stoped development because I no longer wanted to use PCA.
+I stoped development because I no longer wanted to use PCA in my analyses. 
 
 Code needs review. Not thoroughly tested. 
 
