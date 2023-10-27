@@ -1,8 +1,6 @@
 # ---Removed---
 
-Removed from git because it is not being maintained
-
-# -------------
+Removed from git because it is not being maintained.
 
 # Easy voxelwise principal component analysis (PCA) implemented for positron emission tomography (PET) scans.
 
